@@ -4,6 +4,34 @@ var obj = {};
 var nextObj = Object.create(Object.prototype);
 var lastObj = new Object();
 
+
+Dodawanie własności obieków.
+
+var obj = {
+    param0: 'parametr 0;'
+};
+
+obj.param1 = 'new value';
+obj['param2'] = 'test value';
+
+var val3 = 'param3';
+obj[val3] = 'another value';
+
+
+
+Definicja własniści:
+
+Object.defnineProperty(obj, 'param0', {
+    value: 'parametr 0',
+    writable: true,
+    enumerable: true,
+    configurable: true
+});
+
+
+
+
+
 Uniemożliwienie edycji obiejtu.
 defineProperty
 freeze
