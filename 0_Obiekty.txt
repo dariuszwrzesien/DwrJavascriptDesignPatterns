@@ -1,0 +1,9 @@
+Tworzenie obiektu:
+
+var obj = {};
+var nextObj = Object.create(Object.prototype);
+var lastObj = new Object();
+
+Uniemożliwienie edycji obiejtu.
+defineProperty
+freeze
