@@ -24,16 +24,22 @@ var repo = function () {
 
 	var db = {} //np. połączenie z bazą. Ponieważ nie zwracamy tego w return ponizej jest to właściwość prywatna
 
-	return {
-		get: function(id) {
+	var get = function(id) {
 			console.log('Get ' + id);
 			return {
 				name: 'new task from repository'			
 			}		
 		}
-		save: function(task) {
+
+	var save = function(task) {
 			console.log('Saving ' + task.name + ' to the db');		
 		}
+
+
+	//lista dostepnych metod z medułu 'repo'
+	return {
+		get,
+		save
 	}
 
 }
