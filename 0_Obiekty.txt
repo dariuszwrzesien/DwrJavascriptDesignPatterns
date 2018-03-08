@@ -32,6 +32,11 @@ Object.defnineProperty(obj, 'param0', {
 
 
 
-Uniemożliwienie edycji obiejtu.
-defineProperty
-freeze
+Uniemożliwienie edycji obiektu
+defineProperty - writable na false - ale jeśli jest tam trzymany obiekt to mozna edytować właściwości tego obiektu
+
+var obj = {
+    param0: {name:'test'}
+};
+
+freeze - zabrania nam edytować także własności obiektu wewnątrz

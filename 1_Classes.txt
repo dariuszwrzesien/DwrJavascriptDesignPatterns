@@ -1,0 +1,20 @@
+'use strict' //musi być gdy stosujemy klasy
+
+class Task() {
+	constructor(name) {
+		this.name = name;
+		this.completed = false;
+	};
+ 
+	complete() {
+		this.completed = true;
+	};
+
+	save() {
+		console.log(this.name);	
+	};
+}
+
+let task = new Task('testowy name');
+task.complete();
+task.save(); 

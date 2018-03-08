@@ -1,0 +1,20 @@
+Constructor
+
+
+Użycie za pomocą funkcji:
+
+
+function ObjectName(param1, param2) {
+	this.param1 = param1; //this odnosi się do ciała funkcji
+	this.param2 = param2;
+	this.toString = function () {
+		return this.param1 + ' ' + this.param2;	
+	}
+}
+
+var obj1 = new ObjectName('foo', 'baz');
+var obj2 = ObjectName('dupa', 'kupa');
+
+console.log(obj1); //{param1: "foo", param2: "baz", toString: ƒ}
+console.log(obj2); //undefined
+
