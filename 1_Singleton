@@ -1,0 +1,27 @@
+var TaskRepo = (function () {
+	var taskRepo;
+	function createRepo() {
+		var taskRepo = new Object("Task");
+		return taskRepo;	
+	}
+  
+	return {
+		getInstance: function () {
+			if (!taskRepo) {
+				taskRepo = createRepo();							
+			}		
+			return taskRepo;
+      }
+		};
+
+})();
+
+var repo01 = TaskRepo.getInstance();
+var repo02 = TaskRepo.getInstance();
+
+
+console.log(repo01);
+
+if (repo01 === repo02) {
+  console.log("Same TaskRepo");
+}
