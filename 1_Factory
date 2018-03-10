@@ -1,0 +1,32 @@
+//FLowmeterAlarmFactory.js
+
+'use strict';
+
+const _ = require('lodash');
+
+const DmaAlarmModel = require('./../model/dmaAlarmModel');
+const FlowmeterAlarmModel = require('./../model/flowmeterAlarmModel');
+const WatermeterAlarmModel = require('./../model/watermeterAlarmModel');
+const ZonalWatermeterAlarmModel = require('./../model/zonalWatermeterAlarmModel');
+
+function alarmModelFactory(data) {
+    if (_.get(data, 'flowmeter')) {
+        return new FlowmeterAlarmModel(data);
+    }
+
+    if (_.hasIn(data, 'watermeter.priority')) {
+        return new WatermeterAlarmModel(data);
+    }
+
+    if (_.get(data, 'watermeter')) {
+        return new ZonalWatermeterAlarmModel(data);
+    }
+
+    if (_.get(data, 'dma')) {
+        return new DmaAlarmModel(data);
+    }
+
+    return data;
+}
+
+module.exports = alarmModelFactory;
