@@ -1,0 +1,67 @@
+
+//Dany mamy obiekt z właściwościamu
+var Task = function (data) {
+	this.name = data.name;
+	this.priority = data.priority;
+	this.project = data.project;
+	this.user = data.user;
+	this.completed = data.completed;
+}
+//oraz TaskService który jest modułem pozwalającym na modyfikacje obiektu task
+var TaskService = function () {
+	return {
+		complete: function (task) {
+			this.complete = true;		
+		}
+		setCompleteDate: function (task) {
+			this.completeDate = new Date();		
+		}
+		notify: function (task, user) {
+			console.log('Notifying ' + user ' ' + task.name);		
+		}	
+		save: function (task) {
+			console.log('Save ' + task.name);		
+		}
+	}
+}
+
+//Tutaj mamy wywołanie które powoduje
+
+var myTask = new Task ({
+	name: 'MyTask';
+	priority: 1,
+	project: 'MyProject';
+	user: 'Super User';
+	complete: false;
+	
+})
+
+
+TaskService.complete(myTask);
+if (myTask.complete == true) {
+	TaskService.serCompleteDate(myTask);
+	TaskService.notify(myTask, myTask.user);
+	TaskService.save(myTask);
+}
+
+//Zamiast powyższego wywowłania utworzymy fasade która zagreguje nam wszystko w jedym miejscu i udostepni jeden punkt wejscia - czyli completeAndNotify(task);
+
+
+var TaskServiceWrapper = function () { //Tworzymy facade - czyli wrapper
+	
+	var completeAndNotify = function (task) {
+		TaskService.complete(task);
+		if (task.complete == true) {
+			TaskService.serCompleteDate(task);
+			TaskService.notify(task, task.user);
+			TaskService.save(task);
+		}
+	}	
+		
+
+	return {
+		completeAndNotify: completeAndNotify	
+	}
+};
+
+TaskServiceWrapper.completeAndNotify(myTask);
