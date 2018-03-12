@@ -1,0 +1,42 @@
+Prosty dekorator:
+
+
+var Task = function (name) {
+	this.name = name;
+	this.completed = false;
+}
+
+Task.prototype.complete = function () {
+	this.completed = true;
+}
+
+Task.prototype.save = function () {
+	console.log('saving ' + this.name);
+}
+
+var myTask = new Task('Legacy Task');
+myTask.complete();
+myTask.save();
+
+//Chcemy dodać (udekorować) Task możliwością nadania priorytetu oraz notyfikacji, ale nie chemy zmieniać niczego w obecnie działającym obiekcie myTask
+
+var urgentTask = new Task('Urgent Task');
+
+//Dodajemy właściwość oraz metodę tylko dla urgentTask
+urgentTask.prority = 1;
+urgentTask.notify = function() {
+	console.log('This is important !!!');
+}
+
+urgentTask.complete()
+
+//Nadpisujemy metodę save, a w jej body wykonujemy notify() oraz orginalnie zdefiniowaną metodę save z Task.prototype.save - czyli w naszym przypadku wypisanie do konsoli console.log('saving ' + this.name);
+
+urgentTask.save = function() {
+	this.notify();
+	Task.prototype.save.call(this);
+}
+
+urgentTask.save();
+
+
