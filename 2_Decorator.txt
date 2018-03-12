@@ -73,7 +73,7 @@ console.log(ut); //{name: 'This is urgent', completed: false, priority: 1}
 
 //Ponieważ chcemy mieć również możliwości użycia metod zdefiniowanych w Task.prototype, to aby tego dokonać należy:
 
-UrgentTask.prototype = Object.create(Task.prototype); / Wazne jest aby użyć Object.create() zamiast prostego przypisania ponieważ  
+UrgentTask.prototype = Object.create(Task.prototype); / Wazne jest aby użyć Object.create() zamiast prostego przypisania ponieważ wykonując proste przypisanie czyli UrgentTask.prototype = Task.prototype; i modyfikując classe tak jak  poniżej - modyfikowalibyśmy też classe bazową - a tego ruszac nie chcemy
 
 UrgentTask.prototype.notify = function () {
 	console.log('This is important !!!');
@@ -81,6 +81,7 @@ UrgentTask.prototype.notify = function () {
 
 UrgentTask.prototype.save = function() {
 	this.notify();
+	console.log('sth special here');
 	Task.prototype.save.call(this); //wywołujemy metodę save z Task.prototype
 }
 
