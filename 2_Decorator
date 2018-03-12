@@ -1,5 +1,5 @@
 Prosty dekorator:
-
+----------------------------------------------
 
 var Task = function (name) {
 	this.name = name;
@@ -34,9 +34,59 @@ urgentTask.complete()
 
 urgentTask.save = function() {
 	this.notify();
-	Task.prototype.save.call(this);
+	Task.prototype.save.call(this); //wywołujemy metodę save z Task.prototype
 }
 
 urgentTask.save();
+
+
+Wersja rozszerzona
+----------------------------------------------
+
+var Task = function (name) {
+	this.name = name;
+	this.completed = false;
+}
+
+Task.prototype.complete = function () {
+	this.completed = true;
+}
+
+Task.prototype.save = function () {
+	console.log('saving ' + this.name);
+}
+
+var myTask = new Task('Legacy Task');
+myTask.complete();
+myTask.save();
+
+//Tworzymy subclasę classy Task:
+
+var UrgentTask = function(name, priority) {
+	Task.call(this, name); // wykonujemy konstruktor z var Task
+	this.priority = priority; //Dodajemy nową właściwość priority
+}
+
+var ut = new UrgentTask('This is urgent', 1);
+console.log(ut); //{name: 'This is urgent', completed: false, priority: 1}
+
+
+//Ponieważ chcemy mieć również możliwości użycia metod zdefiniowanych w Task.prototype, to aby tego dokonać należy:
+
+UrgentTask.prototype = Object.create(Task.prototype); / Wazne jest aby użyć Object.create() zamiast prostego przypisania ponieważ  
+
+UrgentTask.prototype.notify = function () {
+	console.log('This is important !!!');
+}
+
+UrgentTask.prototype.save = function() {
+	this.notify();
+	Task.prototype.save.call(this); //wywołujemy metodę save z Task.prototype
+}
+
+
+
+
+
 
 
