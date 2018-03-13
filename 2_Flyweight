@@ -1,0 +1,197 @@
+Flyweight pattern - używamy gdy mamy do czynienia z dużą ilością tworzonych obiektów, a obiekty te nie nie różnią sie bardzo od siebie. Wzorzec ten pozwala nam zaoszczędzić pamięć.
+
+Dane wejściowe do zastosowania wzorca:
+
+var Task = function (data) {
+	this.name = data.name; //tym różni się każdy task
+	this.priority = data.priority;
+	this.project = data.project;
+	this.user = data.user;
+	this.completed = data.completed;
+}
+
+function TaskCollection() {
+	var tasks = {};
+	var count = 0;
+
+	var add = function (data) {
+		tasks[data.name] = new Task(data);
+		count++;	
+	};
+	var get = function (name) {
+		return tasks[name];	
+	};
+	var getCount = function () {
+		return count;
+	};
+
+	return {
+		add,
+		get,
+		getCount	
+	}
+}
+
+var tasks = new TaskCollection();
+
+var projects = ['none', 'courses', 'training', 'project', 'break', 'asd', 'dsa'];
+var priorities = [1,2,3,4,5,6,7,8]
+var users = ['Darek', 'Jarek', 'Zosia', 'Samosia', 'Jan', 'Piotrek', 'none', 'courses', 'training', 'project', 'break', 'asd', 'dsa'];
+var completed = [true, false];
+
+var initialMemory = process.memoryUsage().heapUsed; //zaczynamy mierzyc zuzycie pamieci
+
+for (var i=0; i < 1000000; i++) {
+	tasks.add({
+		name: 'task' + i,
+		priority: priorities[Math.floor((Math.random() * 7))],
+		project: projects[Math.floor((Math.random() * 8))],
+		user: users[Math.floor((Math.random() * 13))],
+		completed: users[Math.floor((Math.random() * 6))]
+	})
+};
+
+var afterMemory = process.memoryUsage().heapUsed; //kończymy mierzyć uzycie pamieci
+
+console.log('Zurzyto pamieci: ' + (afterMemory - initialMemory) / 1000000);
+console.log('tasks: ' + tasks.getCount());
+
+Dla powyższych danych otrzymałem następujące wartości
+Zurzyto pamieci: 183.345952
+tasks: 1000000
+
+
+
+Do czego będzie sprowadzać się implementacja?
+
+A więc postaram sie zagregować powtarzające się dane w obiekcie Task. Czyli wszystko co nie jest unikatowe:
+priority, project, user, completed.
+
+Powtórze cały kod jeszcze raz aby lepiej to zobrazować.
+
+var Task = function (data) {
+	this.flyweight = FlyweightFactory.get(data.project, data.priority, data.user, data.completed);
+	this.name = data.name
+}
+
+Task.prototype.getPriority = function () { // ta metoda pozwoli nam na dostanie sie do właściwości priority w bardziej elegancki sposob czyli poprzez getPriority
+	
+	this.flyweight.priority
+}
+
+function Flyweight(project, priority, user, completed) { //w tym miejscu agregujemy sobie powtarzające się dane
+	this.priority = priority;
+	this.project = project;
+	this.user = user;
+	this.completed = completed;
+}
+
+var FlyweightFactory = function () {
+	var flyweights = {};
+	var get = function (project, priority, user, completed) {
+		if (!flyweights[project + priority + user + completed]) {
+			flyweights[project + priority + user + completed] = 
+				new Flyweight(project, priority, user, completed);		
+		}
+		return flyweights[project + priority + user + completed];
+	};
+	var getCount = function () {
+		var count = 0;
+		for (var f in flyweights) count++;
+		return count;	
+	}
+	return {
+		get: get,
+		getCount: getCount	
+	}
+}()
+
+function TaskCollection() {
+	var tasks = {};
+	var count = 0;
+
+	var add = function (data) {
+		tasks[data.name] = new Task(data);
+		count++;	
+	};
+	var get = function (name) {
+		return tasks[name];	
+	};
+	var getCount = function () {
+		return count;
+	};
+
+	return {
+		add,
+		get,
+		getCount	
+	}
+}
+
+var tasks = new TaskCollection();
+
+var projects = ['none', 'courses', 'training', 'project', 'break', 'asd', 'dsa'];
+var priorities = [1,2,3,4,5,6,7,8]
+var users = ['Darek', 'Jarek', 'Zosia', 'Samosia', 'Jan', 'Piotrek', 'none', 'courses', 'training', 'project', 'break', 'asd', 'dsa'];
+var completed = [true, false];
+
+var initialMemory = process.memoryUsage().heapUsed; //zaczynamy mierzyc zuzycie pamieci
+
+for (var i=0; i < 1000000; i++) {
+	tasks.add({
+		name: 'task' + i,
+		priority: priorities[Math.floor((Math.random() * 7))],
+		project: projects[Math.floor((Math.random() * 8))],
+		user: users[Math.floor((Math.random() * 13))],
+		completed: users[Math.floor((Math.random() * 6))]
+	})
+};
+
+var afterMemory = process.memoryUsage().heapUsed; //kończymy mierzyć uzycie pamieci
+
+console.log('Zurzyto pamieci: ' + (afterMemory - initialMemory) / 1000000);
+console.log('tasks: ' + tasks.getCount());
+console.log('flyweights: ' + FlyweightFactory.getCount());
+
+Zurzyto pamieci: 194.3382
+tasks: 1000000
+flyweights: 3900
+
+
+W moim przypadku to nie zadziałało - może miałem złe dane wejsiowe ?
+Zobaczmy dla bardziej okrojonych danych
+
+
+var projects = ['none', 'courses'];
+var priorities = [1,2]
+var users = ['Darek', 'Jarek'];
+var completed = [true, false];
+
+var initialMemory = process.memoryUsage().heapUsed; //zaczynamy mierzyc zuzycie pamieci
+
+for (var i=0; i < 1000000; i++) {
+	tasks.add({
+		name: 'task' + i,
+		priority: priorities[Math.floor((Math.random() * 2))],
+		project: projects[Math.floor((Math.random() * 2))],
+		user: users[Math.floor((Math.random() * 2))],
+		completed: users[Math.floor((Math.random() * 2))]
+	})
+};
+
+Output przed flywieght
+-----------------------
+Zurzyto pamieci: 181.855712
+tasks: 1000000
+
+
+Output z flyweight
+-----------------------
+
+Zurzyto pamieci: 197.012632
+tasks: 1000000
+flyweights: 16
+
+Przy bardziej okrojonych danych różnica jest jeszcze wieksza ze wzgledu na mniejszą ilość flyweights.
+
+
