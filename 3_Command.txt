@@ -1,0 +1,88 @@
+
+
+var repo = {
+    tasks: {},
+    commands: [],
+    select: function (id) {
+        console.log('Getting task ' + id);
+        return {
+            name: 'new task from db'
+        }
+    },
+    save: function (task) {
+        repo.tasks[task.id] = task;
+        console.log('Saving ' + task.name + ' to the db');
+    },
+    
+    //Metoda ta leci po wszystkich komandach trzymanych w repo.commands i uruchamia je jeszcze raz - np w przypadku gdybyśmy potrzebowali przywrócić stan bazy od początku
+    replay: function() {
+      for (var i = 0; i < repo.commands.length; i++) {
+        var command = repo.commands[i];
+        repo.executeNoLog(command.name, command.obj)	
+      }
+    }
+
+}
+
+
+//Wyzwalacz
+repo.execute = function(name){
+    var args = Array.prototype.slice.call(arguments, 1); //pobieramy drugi przekazany paprametr w fnkcji - w naszym przypadku Task1     
+
+    repo.commands.push({
+	name: name,
+        obj: args[0]
+    })
+
+    if(repo[name]){
+        return repo[name].apply(repo, args)
+    }
+
+    return false;
+};
+
+//metoda potrzbana do wyzwolenia komanda ale bez repo.commands.push - uzywana przez replay() do przywrócenia stanu
+repo.executeNoLog = function (name) {
+  var args = Array.prototype.slice.call(arguments, 1);
+  
+	if(repo[name]){
+        return repo[name].apply(repo, args)
+    }
+
+    return false;
+}
+
+var Task1 = {
+	id: 1,
+	name: 'Task 1',
+	completed: false
+}
+var Task2 = {
+	id: 2,
+	name: 'Task 2',
+	completed: false
+}
+
+var Task3 = {
+	id: 3,
+	name: 'Task 3',
+	completed: false
+}
+
+var Task4 = {
+	id: 4,
+	name: 'Task 4',
+	completed: false
+}
+
+
+repo.execute('save', Task1);
+repo.execute('save', Task2);
+repo.execute('save', Task3);
+repo.execute('save', Task4);
+
+console.log(repo.tasks);
+
+repo.tasks = {} //kasujemy wszystko z repozytorium (bazy danych)
+
+repo.replay(); // Uruchamiając replay - przywracamy stan bazy który mnieliśmy przed wykasowaniem wszytskiego z bazy.
